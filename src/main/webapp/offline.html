@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+  <title>Offline | ENI Ecole Informatique</title>
+  <link rel="stylesheet" href="./styles/offline.css">
+</head>
+<body>
+
+<div class="content">
+  <img src="./images/offline.png" alt="VaadinCRM is offline" class="offline-image"/>
+  <h1>Vous etes hors ligne!</h1>
+  <p>Votre connexion Internet est hors ligne. Revenez en ligne pour continuer à utiliser notre catalogue de livres.</p>
+</div>
+<script>
+  window.addEventListener('online', location.reload);
+</script>
+</body>
+</html>
