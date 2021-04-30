@@ -6,26 +6,27 @@ import javax.validation.constraints.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.time.LocalDateTime;
 
 @Entity
 public class Reservation extends AbstractEntity{
 	
 	
-	private @Id @GeneratedValue Long id;
+	private @Id @GeneratedValue UUID id;
 	@NotNull
 	private LocalDateTime createdAt;
 	@OneToMany(mappedBy = "reservation", fetch = FetchType.EAGER)
 	private List<Livre> reservations = new LinkedList<>();
-	public Reservation(Long id, @NotNull LocalDateTime createdAt, List<Livre> reservations) {
+	public Reservation(UUID id, @NotNull LocalDateTime createdAt, List<Livre> reservations) {
 		this.id = id;
 		this.createdAt = createdAt;
 		this.reservations = reservations;
 	}
-	public Long getId() {
+	public UUID getId() {
 		return id;
 	}
-	public void setId(Long id) {
+	public void setId(UUID id) {
 		this.id = id;
 	}
 	public LocalDateTime getCreatedAt() {

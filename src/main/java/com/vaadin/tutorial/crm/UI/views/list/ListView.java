@@ -16,6 +16,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.PWA;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 
 
@@ -41,6 +42,7 @@ import com.vaadin.tutorial.crm.UI.views.list.MainLayout;
 @Component
 @Scope("prototype")
 @Route(value = "", layout = MainLayout.class)
+@Secured("ROLE_User")
 @PageTitle("Livres | ENI Ecole Informatique")
 public class ListView extends VerticalLayout {
     /**

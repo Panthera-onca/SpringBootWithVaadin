@@ -25,38 +25,50 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
     
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()  
-            .requestCache().requestCache(new CustomRequestCache()) 
-            .and().authorizeRequests() 
-            .requestMatchers(SecurityUtils::isFrameworkInternalRequest).permitAll()  
+    	http.csrf().disable()
 
-            .anyRequest().authenticated()  
+		// Register our CustomRequestCache, that saves unauthorized access attempts, so
+		// the user is redirected after login.
+		.requestCache().requestCache(new CustomRequestCache())
 
-            .and().formLogin()  
-            .loginPage(LOGIN_URL).permitAll()
-            .loginProcessingUrl(LOGIN_PROCESSING_URL)  
-            .failureUrl(LOGIN_FAILURE_URL)
-            .and().logout().logoutSuccessUrl(LOGOUT_SUCCESS_URL); 
+		// Restrict access to our application.
+		.and().authorizeRequests()
+
+		// Allow all flow internal requests.
+		.requestMatchers(SecurityUtils::isFrameworkInternalRequest).permitAll()
+
+		// Allow all requests by logged in users.
+		.anyRequest().authenticated()
+
+		// Configure the login page.
+		.and().formLogin().loginPage(LOGIN_URL).permitAll().loginProcessingUrl(LOGIN_PROCESSING_URL)
+		.failureUrl(LOGIN_FAILURE_URL)
+		
+		.and().rememberMe().key("pssssst").alwaysRemember(true)
+
+		// Configure logout
+		.and().logout().logoutSuccessUrl(LOGOUT_SUCCESS_URL);
     }
     
     
     @Bean
     @Override
     public UserDetailsService userDetailsService() {
-        UserDetails user =
+        // typical logged in user with some privileges
+        UserDetails normalUser =
             User.withUsername("user")
                 .password("{noop}password")
-                .roles("USER")
+                .roles("User")
                 .build();
 
-        return new InMemoryUserDetailsManager(user);
-    }
-    
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-            .inMemoryAuthentication()
-            .withUser("admin").password("{noop}admin@password").roles("ADMIN");
+        // admin user with all privileges
+        UserDetails adminUser =
+            User.withUsername("admin")
+                .password("{noop}pa$$w0rd")
+                .roles("User", "Admin")
+                .build();
+
+        return new InMemoryUserDetailsManager(normalUser, adminUser);
     }
     @Override
     public void configure(WebSecurity web) {
@@ -67,9 +79,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
             "/manifest.webmanifest",
             "/sw.js",
             "/offline.html",
+            "/frontend/**",
+            "/webjars/**",
             "/icons/**",
             "/images/**",
             "/styles/**",
+            "/frontend-es5/**", 
+            "/frontend-es6/**",
             "/h2-console/**");
     }
     

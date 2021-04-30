@@ -1,11 +1,22 @@
 package com.vaadin.tutorial.crm.UI.views.list;
 
-import com.vaadin.tutorial.crm.backend.entity.UserDetails;
-import com.vaadin.tutorial.crm.backend.repository.UserDetailsRepository;
-import com.vaadin.tutorial.crm.backend.service.UserDetailsService1;
-import com.vaadin.tutorial.crm.backend.service.UserDetailsService1.ServiceException;
+import com.vaadin.tutorial.crm.UI.views.login.LoginView;
+import com.vaadin.tutorial.crm.backend.entity.UserInfo;
+import com.vaadin.tutorial.crm.backend.repository.UserRepository;
 
+
+
+import org.springframework.security.core.Authentication;
+import com.vaadin.tutorial.crm.backend.service.UserDetailsServiceImpl;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.web.context.annotation.ApplicationScope;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.CrudRepository;
+
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -25,6 +36,8 @@ import com.vaadin.flow.data.binder.ValueContext;
 import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.server.ServiceException;
 
 
 @Route(value = "user", layout = MainLayout.class) 
@@ -32,12 +45,13 @@ import com.vaadin.flow.router.Route;
 public class MainView extends VerticalLayout{
 	private PasswordField passwordField1;
     private PasswordField passwordField2;
+    private UserRepository userRepository;
 
-    private UserDetailsService1 service;
-    private BeanValidationBinder<UserDetails> binder;
+    private UserDetailsServiceImpl service;
+    private BeanValidationBinder<UserInfo> binder;
     private boolean enablePasswordValidation;
     
-    public MainView(@Autowired UserDetailsService1 service) {
+    public MainView(@Autowired UserDetailsServiceImpl service) throws ServiceException {
 
         this.service = service;
 
@@ -47,12 +61,13 @@ public class MainView extends VerticalLayout{
 
         H3 title = new H3("Formulaire de inscription");
 
-        TextField nomField = new TextField("Nom");
-        TextField prenomField = new TextField("Prenom");
-        TextField handleField = new TextField("User handle");
+        TextField firstnameField = new TextField("firstname");
+        TextField lastnameField = new TextField("lastname");
+        TextField usernameField = new TextField("username");
 
         EmailField emailField = new EmailField("Email");
         emailField.setVisible(false);
+        TextField rolesField = new TextField("roles");
 
         passwordField1 = new PasswordField("Wanted password");
         passwordField2 = new PasswordField("Password again");
@@ -69,8 +84,8 @@ public class MainView extends VerticalLayout{
         // Create a FormLayout with all our components. The FormLayout doesn't have any
         // logic (validation, etc.), but it allows us to configure Responsiveness from
         // Java code and its defaults looks nicer than just using a VerticalLayout.
-        FormLayout formLayout = new FormLayout(title, nomField, prenomField, handleField, passwordField1, passwordField2,
-                 emailField, errorMessage, submitButton);
+        FormLayout formLayout = new FormLayout(title, firstnameField, lastnameField, usernameField, passwordField1, passwordField2,
+                 emailField, rolesField, errorMessage, submitButton);
 
         // Restrict maximum width and center on page
         formLayout.setMaxWidth("500px");
@@ -106,22 +121,17 @@ public class MainView extends VerticalLayout{
          * automatically validate all JSR-303 definitions, meaning we can concentrate on
          * custom things such as the passwords in this class.
          */
-        binder = new BeanValidationBinder<UserDetails>(UserDetails.class);
+        binder = new BeanValidationBinder<UserInfo>(UserInfo.class);
 
         // Basic name fields that are required to fill in
-        binder.forField(nomField).asRequired().bind("nom");
-        binder.forField(prenomField).asRequired().bind("prenom");
+        binder.forField(firstnameField).asRequired().bind("firstname");
+        binder.forField(lastnameField).asRequired().bind("lastname");
 
         // The handle has a custom validator, in addition to being required. Some values
         // are not allowed, such as 'admin'; this is checked in the validator.
-        binder.forField(handleField).withValidator(this::validateHandle).asRequired().bind("handle");
+        binder.forField(usernameField).withValidator(this::validateUsername).asRequired().bind("username");
 
  
-        // EmailField uses a Validator that extends one of the built-in ones.
-        // Note that we use 'asRequired(Validator)' instead of
-        // 'withValidator(Validator)'; this method allows 'asRequired' to
-        // be conditional instead of always on. We don't want to require the email if
-        // the user declines marketing messages.
         binder.forField(emailField).asRequired(new VisibilityEmailValidator("Value is not a valid email address")).bind("email");
 
         
@@ -152,13 +162,13 @@ public class MainView extends VerticalLayout{
             try {
 
                 // Create empty bean to store the details into
-                UserDetails detailsBean = new UserDetails();
+                UserInfo detailsBean = new UserInfo(null, null, enablePasswordValidation, enablePasswordValidation, enablePasswordValidation, enablePasswordValidation, null);
 
                 // Run validators and write the values to the bean
                 binder.writeBean(detailsBean);
 
                 // Call backend to store the data
-                service.save(detailsBean);
+                userRepository.save(detailsBean);
 
                 // Show success message if everything went well
                 showSuccess(detailsBean);
@@ -169,16 +179,6 @@ public class MainView extends VerticalLayout{
 
                 // We could show additional messages here if we want, do logging, etc.
 
-            } catch (ServiceException e2) {
-
-                // For some reason, the save failed in the back end.
-
-                // First, make sure we store the error in the server logs (preferably using a
-                // logging framework)
-                e2.printStackTrace();
-
-                // Notify, and let the user try again.
-                errorMessage.setText("Saving the data failed, please try again");
             }
         });
 
@@ -187,11 +187,11 @@ public class MainView extends VerticalLayout{
     /**
      * We call this method when form submission has succeeded
      */
-    private void showSuccess(UserDetails detailsBean) {
-        Notification notification = Notification.show("Data saved, welcome " + detailsBean.getHandle());
+    private void showSuccess(UserInfo detailsBean) {
+        Notification notification = Notification.show("Data saved, welcome " + detailsBean.getUsername());
         notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 
-        // Here you'd typically redirect the user to another view
+        new RouterLink("Login", LoginView.class);
     }
 
     /**
@@ -230,9 +230,10 @@ public class MainView extends VerticalLayout{
      * Method that demonstrates using an external validator. Here we ask the backend
      * if this handle is already in use.
      */
-    private ValidationResult validateHandle(String handle, ValueContext ctx) {
+    @SuppressWarnings("serial")
+	private ValidationResult validateUsername(String username, ValueContext ctx) {
 
-        String errorMsg = service.validateHandle(handle);
+        String errorMsg = service.validateUsername(username);
 
         if (errorMsg == null) {
             return ValidationResult.ok();
@@ -240,20 +241,14 @@ public class MainView extends VerticalLayout{
 
         return ValidationResult.error(errorMsg);
     }
-
-    /**
-     * Custom validator class that extends the built-in email validator.
-     * <p>
-     * Ths validator checks if the field is visible before performing the
-     * validation. This way, the validation is only performed when the user has told
-     * us they want marketing emails.
-     */
+    
     public class VisibilityEmailValidator extends EmailValidator {
 
         public VisibilityEmailValidator(String errorMessage) {
             super(errorMessage);
         }
 
-    }
+
 
 }
+    }

@@ -30,8 +30,7 @@ public class MainLayout extends AppLayout{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 3861556402579812524L;
-
+	private static final long serialVersionUID = 3861556402579812524L; 
 	public MainLayout() {
 		createHeader();
 		createDrawer();
@@ -51,7 +50,7 @@ public class MainLayout extends AppLayout{
 
         addToNavbar(header);
         
-        RouterLink listLink = new RouterLink("List", ListView.class);
+        RouterLink listLink = new RouterLink("Livre", ListView.class);
         listLink.setHighlightCondition(HighlightConditions.sameLocation());
 
         addToDrawer(new VerticalLayout(

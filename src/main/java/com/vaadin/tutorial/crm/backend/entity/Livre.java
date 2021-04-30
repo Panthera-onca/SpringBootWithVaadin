@@ -3,6 +3,7 @@ package com.vaadin.tutorial.crm.backend.entity;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.UUID;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -22,7 +23,7 @@ public class Livre extends AbstractEntity implements Cloneable{
 		Campus_de_Rennes, Campus_Nantes_Faraday, Campus_de_Quimper
 	}
 	
-	private @Id @GeneratedValue Long id;
+	private @Id @GeneratedValue UUID id;
 	
 	@NotNull
 	@NotEmpty
@@ -48,6 +49,7 @@ public class Livre extends AbstractEntity implements Cloneable{
 	@NotNull
 	private Campus campus;
 	
+	@Enumerated(EnumType.STRING)
 	@NotNull
     private Disponibilite disponibilite = Disponibilite.DISPONIBLE;
 	
@@ -76,7 +78,7 @@ public class Livre extends AbstractEntity implements Cloneable{
 
 
 
-	public Livre(Long id, @NotNull @NotEmpty String titreLivre, @NotNull @NotEmpty String description,
+	public Livre(UUID id, @NotNull @NotEmpty String titreLivre, @NotNull @NotEmpty String description,
 			@NotNull @NotEmpty String auteur, @NotNull @NotEmpty String refeni, @NotNull @NotEmpty String isbn,
 			@NotNull Campus campus, @NotNull Disponibilite disponibilite, Reservation reservation,
 			@Min(value = 0, message = "Can't have negative amount in stock") int stockCount,
@@ -99,7 +101,7 @@ public class Livre extends AbstractEntity implements Cloneable{
 
 
 
-	public Long getId() {
+	public UUID getId() {
 		return id;
 	}
 
@@ -108,7 +110,7 @@ public class Livre extends AbstractEntity implements Cloneable{
 
 
 
-	public void setId(Long id) {
+	public void setId(UUID id) {
 		this.id = id;
 	}
 
