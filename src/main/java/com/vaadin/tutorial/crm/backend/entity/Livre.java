@@ -23,7 +23,7 @@ public class Livre extends AbstractEntity implements Cloneable{
 		Campus_de_Rennes, Campus_Nantes_Faraday, Campus_de_Quimper
 	}
 	
-	private @Id @GeneratedValue UUID id;
+	private @Id @GeneratedValue Long id;
 	
 	@NotNull
 	@NotEmpty
@@ -78,7 +78,7 @@ public class Livre extends AbstractEntity implements Cloneable{
 
 
 
-	public Livre(UUID id, @NotNull @NotEmpty String titreLivre, @NotNull @NotEmpty String description,
+	public Livre(Long id, @NotNull @NotEmpty String titreLivre, @NotNull @NotEmpty String description,
 			@NotNull @NotEmpty String auteur, @NotNull @NotEmpty String refeni, @NotNull @NotEmpty String isbn,
 			@NotNull Campus campus, @NotNull Disponibilite disponibilite, Reservation reservation,
 			@Min(value = 0, message = "Can't have negative amount in stock") int stockCount,
@@ -101,7 +101,7 @@ public class Livre extends AbstractEntity implements Cloneable{
 
 
 
-	public UUID getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -110,7 +110,7 @@ public class Livre extends AbstractEntity implements Cloneable{
 
 
 
-	public void setId(UUID id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

@@ -12,9 +12,9 @@ public abstract class AbstractEntity {
 	
 	  @Id
 	  @GeneratedValue(strategy= GenerationType.SEQUENCE)
-	  private UUID id;
+	  private Long id;
 
-	  public UUID getId() {
+	  public Long getId() {
 	    return id;
 	  }
 

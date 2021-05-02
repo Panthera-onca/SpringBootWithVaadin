@@ -13,23 +13,23 @@ import java.time.LocalDateTime;
 public class Reservation extends AbstractEntity{
 	
 	
-	private @Id @GeneratedValue UUID id;
+	private @Id @GeneratedValue Long id;
 	@NotNull
 	private LocalDateTime createdAt;
 	@OneToMany(mappedBy = "reservation", fetch = FetchType.EAGER)
 	private List<Livre> reservations = new LinkedList<>();
 	private Disponibilite disponibilite;
-	public Reservation(UUID id, @NotNull LocalDateTime createdAt, List<Livre> reservations,
+	public Reservation(Long id, @NotNull LocalDateTime createdAt, List<Livre> reservations,
 			Disponibilite disponibilite) {
 		this.id = id;
 		this.createdAt = createdAt;
 		this.reservations = reservations;
 		this.disponibilite = disponibilite;
 	}
-	public UUID getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(UUID id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public LocalDateTime getCreatedAt() {
