@@ -62,7 +62,7 @@
       "ts-loader": "8.0.12",
       "typescript": "4.0.3"
     },
-    "hash": "b01ccf2e0ffcd6cacfcf267829e93213a7c520b3b7caf27d4324995822ce0462"
+    "hash": "85ffb205e2431ebea6da107f513f8fd60d391d6faa866ada0949af2d53cee6dc"
   },
   "dependencies": {
     "lit-element": "^2.2.1",
@@ -117,11 +117,11 @@
     "raw-loader": "3.1.0",
     "ts-loader": "8.0.12",
     "typescript": "4.0.3",
+    "webpack": "^4.42.0",
     "webpack-babel-multi-target-plugin": "2.3.3",
     "webpack-cli": "3.3.11",
     "webpack-dev-server": "3.11.0",
     "webpack-merge": "4.2.2",
-    "webpack-mode": "^1.1.0",
-    "webpack": "4.42.0"
+    "webpack-mode": "^1.1.0"
   }
 }

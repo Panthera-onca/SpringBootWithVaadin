@@ -6,9 +6,13 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import com.vaadin.tutorial.crm.backend.entity.Livre;
 
+
+
+@Repository 
 public interface LivreRepository extends JpaRepository<Livre, Long> {
 
 	

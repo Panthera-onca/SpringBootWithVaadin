@@ -18,10 +18,13 @@ public class Reservation extends AbstractEntity{
 	private LocalDateTime createdAt;
 	@OneToMany(mappedBy = "reservation", fetch = FetchType.EAGER)
 	private List<Livre> reservations = new LinkedList<>();
-	public Reservation(UUID id, @NotNull LocalDateTime createdAt, List<Livre> reservations) {
+	private Disponibilite disponibilite;
+	public Reservation(UUID id, @NotNull LocalDateTime createdAt, List<Livre> reservations,
+			Disponibilite disponibilite) {
 		this.id = id;
 		this.createdAt = createdAt;
 		this.reservations = reservations;
+		this.disponibilite = disponibilite;
 	}
 	public UUID getId() {
 		return id;
@@ -41,15 +44,22 @@ public class Reservation extends AbstractEntity{
 	public void setReservations(List<Livre> reservations) {
 		this.reservations = reservations;
 	}
+	public Disponibilite getDisponibilite() {
+		return disponibilite;
+	}
+	public void setDisponibilite(Disponibilite disponibilite) {
+		this.disponibilite = disponibilite;
+	}
 	@Override
 	public String toString() {
-		return "Reservation [id=" + id + ", createdAt=" + createdAt + ", reservations=" + reservations + "]";
+		return "Reservation [id=" + id + ", createdAt=" + createdAt + ", reservations=" + reservations
+				+ ", disponibilite=" + disponibilite + "]";
 	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(createdAt, id, reservations);
+		result = prime * result + Objects.hash(createdAt, disponibilite, id, reservations);
 		return result;
 	}
 	@Override
@@ -61,7 +71,9 @@ public class Reservation extends AbstractEntity{
 		if (getClass() != obj.getClass())
 			return false;
 		Reservation other = (Reservation) obj;
-		return Objects.equals(createdAt, other.createdAt) && Objects.equals(id, other.id)
-				&& Objects.equals(reservations, other.reservations);
+		return Objects.equals(createdAt, other.createdAt) && disponibilite == other.disponibilite
+				&& Objects.equals(id, other.id) && Objects.equals(reservations, other.reservations);
 	}
+	
+	
 }
