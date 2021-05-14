@@ -7,6 +7,8 @@ import com.vaadin.tutorial.crm.backend.repository.LivreRepository;
 import com.vaadin.tutorial.crm.backend.repository.ReservationRepository;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -45,7 +47,25 @@ public class LivreService {
 	public Optional<Livre> findById() {
 		return livreRepository.findById(null);
 	}
-	
+	public Livre updateLivre(@RequestBody Livre  newLivre, @PathVariable Long id) {
+		 
+        return livreRepository.findById(id).map(livre -> {
+            livre.setTitreLivre(newLivre.getTitreLivre());
+            livre.setDescription(newLivre.getDescription());
+            livre.setAuteur(newLivre.getAuteur());
+            livre.setRefeni(newLivre.getRefeni());
+            livre.setIsbn(newLivre.getIsbn());
+            livre.setCampus(newLivre.getCampus());
+            livre.setDisponibilite(newLivre.isDisponibilite());
+            livre.setReservation(newLivre.getReservation());
+            livre.setStockCount(newLivre.getStockCount());
+            livre.setCategorie(newLivre.getCategorie());
+            return livreRepository.save(livre);
+        }).orElseGet(() -> {
+            newLivre.setId(id);
+            return livreRepository.save(newLivre);
+        });
+    }
 	
 	 
 	public long count() {

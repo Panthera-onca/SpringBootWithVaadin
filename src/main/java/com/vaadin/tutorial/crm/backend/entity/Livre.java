@@ -13,12 +13,16 @@ import javax.validation.constraints.NotNull;
 
 
 @Entity
+@Table
 public class Livre extends AbstractEntity implements Cloneable{
-	
+	public enum Disponibilite{
+		DISPONIBLE, INDISPONIBLE, EMPRUNTE
+	}
 	
 	public enum Categorie {
 	    SYSTEME, DEVELOPPEMENT, WEB
 	  }
+	
 	public enum Campus{
 		Campus_de_Rennes, Campus_Nantes_Faraday, Campus_de_Quimper
 	}
@@ -48,23 +52,18 @@ public class Livre extends AbstractEntity implements Cloneable{
 	@Enumerated(EnumType.STRING)
 	@NotNull
 	private Campus campus;
-	
 	@Enumerated(EnumType.STRING)
 	@NotNull
-    private Disponibilite disponibilite = Disponibilite.DISPONIBLE;
+	private Categorie categorie;
+	@NotNull
+    private boolean disponibilite;
 	
-	@ManyToOne
-	@JoinColumn(name = "reservation_id")
+	@OneToOne(fetch = FetchType.LAZY, mappedBy = "livre")
 	private Reservation reservation;
 	
-	@Min(value = 0, message = "Can't have negative amount in stock")
+	@Min(value = 0, message = "Le montant des livres ne peut pas etre negatif")
     private int stockCount = 0;
 	
-	
-	
-	@Enumerated(EnumType.STRING)
-	@NotNull
-	private Livre.Categorie categorie;
 	
 	
 	
@@ -78,11 +77,14 @@ public class Livre extends AbstractEntity implements Cloneable{
 
 
 
+	
+
+
 	public Livre(Long id, @NotNull @NotEmpty String titreLivre, @NotNull @NotEmpty String description,
 			@NotNull @NotEmpty String auteur, @NotNull @NotEmpty String refeni, @NotNull @NotEmpty String isbn,
-			@NotNull Campus campus, @NotNull Disponibilite disponibilite, Reservation reservation,
-			@Min(value = 0, message = "Can't have negative amount in stock") int stockCount,
-			@NotNull Livre.Categorie categorie) {
+			@NotNull Campus campus, @NotNull Categorie categorie, @NotNull boolean disponibilite,
+			Reservation reservation,
+			@Min(value = 0, message = "Le montant des livres ne peut pas etre negatif") int stockCount) {
 		this.id = id;
 		this.titreLivre = titreLivre;
 		this.description = description;
@@ -90,11 +92,14 @@ public class Livre extends AbstractEntity implements Cloneable{
 		this.refeni = refeni;
 		this.isbn = isbn;
 		this.campus = campus;
+		this.categorie = categorie;
 		this.disponibilite = disponibilite;
 		this.reservation = reservation;
 		this.stockCount = stockCount;
-		this.categorie = categorie;
 	}
+
+
+
 
 
 
@@ -110,9 +115,15 @@ public class Livre extends AbstractEntity implements Cloneable{
 
 
 
+
+
+
 	public void setId(Long id) {
 		this.id = id;
 	}
+
+
+
 
 
 
@@ -128,9 +139,15 @@ public class Livre extends AbstractEntity implements Cloneable{
 
 
 
+
+
+
 	public void setTitreLivre(String titreLivre) {
 		this.titreLivre = titreLivre;
 	}
+
+
+
 
 
 
@@ -146,9 +163,15 @@ public class Livre extends AbstractEntity implements Cloneable{
 
 
 
+
+
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+
+
 
 
 
@@ -164,9 +187,15 @@ public class Livre extends AbstractEntity implements Cloneable{
 
 
 
+
+
+
 	public void setAuteur(String auteur) {
 		this.auteur = auteur;
 	}
+
+
+
 
 
 
@@ -182,9 +211,15 @@ public class Livre extends AbstractEntity implements Cloneable{
 
 
 
+
+
+
 	public void setRefeni(String refeni) {
 		this.refeni = refeni;
 	}
+
+
+
 
 
 
@@ -200,9 +235,15 @@ public class Livre extends AbstractEntity implements Cloneable{
 
 
 
+
+
+
 	public void setIsbn(String isbn) {
 		this.isbn = isbn;
 	}
+
+
+
 
 
 
@@ -218,6 +259,9 @@ public class Livre extends AbstractEntity implements Cloneable{
 
 
 
+
+
+
 	public void setCampus(Campus campus) {
 		this.campus = campus;
 	}
@@ -227,7 +271,34 @@ public class Livre extends AbstractEntity implements Cloneable{
 
 
 
-	public Disponibilite getDisponibilite() {
+
+
+
+	public Categorie getCategorie() {
+		return categorie;
+	}
+
+
+
+
+
+
+
+
+
+	public void setCategorie(Categorie categorie) {
+		this.categorie = categorie;
+	}
+
+
+
+
+
+
+
+
+
+	public boolean isDisponibilite() {
 		return disponibilite;
 	}
 
@@ -236,9 +307,15 @@ public class Livre extends AbstractEntity implements Cloneable{
 
 
 
-	public void setDisponibilite(Disponibilite disponibilite) {
+
+
+
+	public void setDisponibilite(boolean disponibilite) {
 		this.disponibilite = disponibilite;
 	}
+
+
+
 
 
 
@@ -254,9 +331,15 @@ public class Livre extends AbstractEntity implements Cloneable{
 
 
 
+
+
+
 	public void setReservation(Reservation reservation) {
 		this.reservation = reservation;
 	}
+
+
+
 
 
 
@@ -272,6 +355,9 @@ public class Livre extends AbstractEntity implements Cloneable{
 
 
 
+
+
+
 	public void setStockCount(int stockCount) {
 		this.stockCount = stockCount;
 	}
@@ -281,30 +367,19 @@ public class Livre extends AbstractEntity implements Cloneable{
 
 
 
-	public Livre.Categorie getCategorie() {
-		return categorie;
-	}
-
-
-
-
-
-
-	public void setCategorie(Livre.Categorie categorie) {
-		this.categorie = categorie;
-	}
-
-
-
 
 
 
 	@Override
 	public String toString() {
 		return "Livre [id=" + id + ", titreLivre=" + titreLivre + ", description=" + description + ", auteur=" + auteur
-				+ ", refeni=" + refeni + ", isbn=" + isbn + ", campus=" + campus + ", disponibilite=" + disponibilite
-				+ ", reservation=" + reservation + ", stockCount=" + stockCount + ", categorie=" + categorie + "]";
+				+ ", refeni=" + refeni + ", isbn=" + isbn + ", campus=" + campus + ", categorie=" + categorie
+				+ ", disponibilite=" + disponibilite + ", reservation=" + reservation + ", stockCount=" + stockCount
+				+ "]";
 	}
+
+
+
 
 
 
@@ -319,6 +394,9 @@ public class Livre extends AbstractEntity implements Cloneable{
 				reservation, stockCount, titreLivre);
 		return result;
 	}
+
+
+
 
 
 
@@ -340,6 +418,25 @@ public class Livre extends AbstractEntity implements Cloneable{
 				&& Objects.equals(refeni, other.refeni) && Objects.equals(reservation, other.reservation)
 				&& stockCount == other.stockCount && Objects.equals(titreLivre, other.titreLivre);
 	}
+
+
+
+
+
+
+
+
+
+	public boolean isNewProduct() {
+        return getId() == -1;
+    }
+
+
+
+
+
+
+	
 
 
 

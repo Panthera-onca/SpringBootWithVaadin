@@ -7,13 +7,10 @@ import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.checkbox.CheckboxGroup;
-import com.vaadin.flow.component.checkbox.CheckboxGroupVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.select.Select;
-import com.vaadin.flow.component.listbox.ListBox;
+
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.KeyModifier;
 import com.vaadin.flow.component.html.Div;
@@ -29,9 +26,8 @@ import com.vaadin.flow.data.binder.Result;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.binder.ValueContext;
 import com.vaadin.flow.shared.Registration;
-import com.vaadin.tutorial.crm.backend.entity.Disponibilite;
 import com.vaadin.tutorial.crm.backend.entity.Livre;
-import com.vaadin.tutorial.crm.backend.entity.Livre.Categorie;
+import com.vaadin.tutorial.crm.backend.entity.Livre.*;
 import com.vaadin.tutorial.crm.backend.entity.Reservation;
 import com.vaadin.flow.data.converter.Converter;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
@@ -46,7 +42,6 @@ public class LivreForm extends FormLayout{
 	 */
 	private static final long serialVersionUID = -4235188788593264058L;
 	private Livre livre;
-	private final Select<Disponibilite> disponibilite;
     private final TextField stockCount;
 	TextField titreLivre = new TextField("titreLivre");
 	TextField description = new TextField("description");
@@ -58,7 +53,7 @@ public class LivreForm extends FormLayout{
 	ComboBox<Livre.Categorie> categorie = new ComboBox<>("Categorie");
 	ComboBox<Reservation> reservation = new ComboBox<Reservation>();
 	ComboBox<Livre.Campus> campus = new ComboBox<>("Campus");
-	
+	ComboBox<Livre.Disponibilite> disponibilite = new ComboBox<>("Disponibilite");
 	Button save = new Button("Save"); 
 	Button delete = new Button("Delete");
 	Button close = new Button("Cancel");
@@ -68,10 +63,7 @@ public class LivreForm extends FormLayout{
 	public LivreForm(List<Reservation> reservations) {
 		stockCount = new TextField("In stock");
 	    stockCount.setValueChangeMode(ValueChangeMode.EAGER);
-	    disponibilite = new Select<>();
-	    disponibilite.setLabel("Disponibilite");
-	    disponibilite.setWidth("100%");
-	    disponibilite.setItems(Disponibilite.values());
+	    
 		addClassName("livre-form");
 		binder.forField(stockCount).withConverter(new StockCountConverter())
               .bind("stockCount");
@@ -79,11 +71,13 @@ public class LivreForm extends FormLayout{
 	    reservation.setItems(reservations);
 	    categorie.setItems(Livre.Categorie.values());
 	    campus.setItems(Livre.Campus.values());;
+	    disponibilite.setItems(Livre.Disponibilite.values());
 	    add(titreLivre,
 	    	description,
 	    	auteur,
 	        refeni,
 	        isbn,
+	        disponibilite,
 	        categorie,
 	        campus,
 	        stockCount,

@@ -14,5 +14,8 @@ import com.vaadin.tutorial.crm.backend.entity.Reservation;
 
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long>{
+	@Query("select l from Livre  l " +
+		      "where lower(l.titreLivre) like lower(concat('%', :searchTerm, '%')) ")
+	List<Reservation> search(@Param("searchTerm") String searchTerm);
 
 }

@@ -12,7 +12,6 @@ import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.tutorial.crm.UI.views.list.ListView;
-import com.vaadin.tutorial.crm.UI.views.dashboard.DashboardView;
 
 
 @PWA(
@@ -55,14 +54,14 @@ public class MainLayout extends AppLayout{
 
         addToDrawer(new VerticalLayout(
             listLink,
-            new RouterLink("Dashboard", DashboardView.class)
+            new RouterLink("Reservations", ReservationForm.class)
         ));
         
-        RouterLink mainLink = new RouterLink("User", MainView.class);
+        RouterLink mainLink = new RouterLink("Reservation", ReservationView.class);
         mainLink.setHighlightCondition(HighlightConditions.sameLocation());
         addToDrawer(new VerticalLayout(
         		mainLink,
-                new RouterLink("User", MainView.class)
+                new RouterLink("Reservation", ReservationView.class)
             ));
         
         
@@ -70,10 +69,10 @@ public class MainLayout extends AppLayout{
 	}
 
 	private void createHeader() {
-		RouterLink listLink = new RouterLink("List", ListView.class); 
-        listLink.setHighlightCondition(HighlightConditions.sameLocation()); 
+		RouterLink resLink = new RouterLink("resform", ReservationForm.class); 
+        resLink.setHighlightCondition(HighlightConditions.sameLocation()); 
 
-        addToDrawer(new VerticalLayout(listLink)); 
+        addToDrawer(new VerticalLayout(resLink)); 
         H1 logo = new H1("ENI Ecole Informatique");
         logo.addClassName("logo");
 
