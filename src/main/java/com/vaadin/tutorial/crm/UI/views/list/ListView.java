@@ -81,7 +81,7 @@ public class ListView extends VerticalLayout {
         private void configureGrid() {
             grid.addClassName("livre-grid");
             grid.setSizeFull();
-            grid.setColumns("titreLivre", "description", "auteur", "refeni", "isbn", "categorie", "disponibilite", "campus"); 
+            grid.setColumns("titreLivre", "description", "auteur", "refeni", "isbn", "categorie",  "campus"); 
             grid.addColumn(livre -> { 
                 Reservation reservation = livre.getReservation();
                 return reservation == null ? "-" : reservation.getCreatedAt();

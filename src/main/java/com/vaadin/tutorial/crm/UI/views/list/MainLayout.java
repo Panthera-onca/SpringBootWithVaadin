@@ -20,8 +20,7 @@ import com.vaadin.tutorial.crm.UI.views.list.ListView;
 	    offlineResources = {
 	        "./styles/offline.css",
 	        "./images/offline.png"
-	    },
-	    enableInstallPrompt = false
+	    }
 	)
 	@CssImport("./styles/shared-styles.css")
 public class MainLayout extends AppLayout{

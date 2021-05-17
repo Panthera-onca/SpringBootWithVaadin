@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class UserService implements UserDetailsService{
+public class UserService {
 
     @Autowired
     private UserRepository userRepository;
@@ -67,9 +67,4 @@ public class UserService implements UserDetailsService{
         return "{SHA}" + base64;
     }
 
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user = userRepository.findByUsername(username);
-	    return user;
-	}
 }

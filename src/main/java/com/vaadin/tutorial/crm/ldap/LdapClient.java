@@ -9,6 +9,7 @@ import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.support.LdapNameBuilder;
+import org.springframework.stereotype.Component;
 
 import javax.naming.Name;
 import java.security.MessageDigest;
@@ -16,6 +17,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.List;
 
+@Component
 public class LdapClient {
 
     @Autowired
@@ -28,7 +30,7 @@ public class LdapClient {
     private LdapTemplate ldapTemplate;
 
     public void authenticate(final String username, final String password) {
-        contextSource.getContext("cn=" + username + ",ou=users," + env.getRequiredProperty("ldap.partitionSuffix"), password);
+        contextSource.getContext("cn=" + username + ",ou=mathematicians," + env.getRequiredProperty("ldap.partitionSuffix"), password);
     }
 
     public List<String> search(final String username) {

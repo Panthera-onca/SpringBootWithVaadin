@@ -4,6 +4,7 @@ package com.vaadin.tutorial.crm.security;
 import com.vaadin.flow.server.HandlerHelper.RequestType;
 import com.vaadin.flow.shared.ApplicationConstants;
 import com.vaadin.tutorial.crm.UI.views.login.LoginView;
+import org.springframework.stereotype.Component;
 
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.security.access.annotation.Secured;
@@ -18,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
+@Component
 public class SecurityUtils {
 
 	private SecurityUtils() {

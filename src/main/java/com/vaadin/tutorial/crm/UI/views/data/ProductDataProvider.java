@@ -75,7 +75,6 @@ public class ProductDataProvider extends ListDataProvider<Livre> {
         this.filterText = filterText.trim().toLowerCase(Locale.ENGLISH);
 
         setFilter(product -> passesFilter(product.getTitreLivre(), this.filterText)
-                || passesFilter(product.isDisponibilite(), this.filterText)
                 || passesFilter(product.getCategorie(), this.filterText));
     }
 

@@ -2,14 +2,16 @@ package com.vaadin.tutorial.crm.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
+import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
@@ -20,18 +22,33 @@ import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
+import org.springframework.security.ldap.authentication.BindAuthenticator;
+import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
+import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
+import org.springframework.security.ldap.userdetails.InetOrgPersonContextMapper;
+import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
+import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
+import org.springframework.security.provisioning.UserDetailsManager;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import java.util.Arrays;
 
+import com.vaadin.tutorial.crm.UI.views.data.ActiveDirectoryLdapAuthoritiesPopulator;
 import com.vaadin.tutorial.crm.backend.service.UserService;
-import com.vaadin.tutorial.crm.ldap.LdapClient;
 
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.event.LoggerListener;
 
  
 @Configuration
+@Component
 @PropertySource("classpath:application.properties")
 @EnableWebSecurity 
-@EnableLdapRepositories(basePackages = "com.vaadin.tutorial.crm.backend.**")
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
+@EnableLdapRepositories
+public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	private static final String DEFAULT_PAGE = "/";
 	private static final String LOGIN_PROCESSING_URL = "/login";
@@ -91,32 +108,63 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
     @Value("${ldap.enabled}")
     private String ldapEnabled;
     
+    
+    @Autowired
+    private AuthenticationProvider authenticationProvider;
+    
     @Autowired
     UserService userDetailsService;
-    
     @Autowired
-	protected void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth
-		.ldapAuthentication()
-		.contextSource()
-		.url(ldapUrls + ldapBaseDn)
-		.managerDn(ldapSecurityPrincipal)
-		.managerPassword(ldapPrincipalPassword)
-		.and()
-		.userDnPatterns(ldapUserDnPattern)
-		.and()
-		.userDetailsService(userDetailsService);
-		
-	}
-	
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		@SuppressWarnings("deprecation")
-		LdapShaPasswordEncoder passwordEncoder = new LdapShaPasswordEncoder();
-		return passwordEncoder;
-	}
+    private Environment env;
     
+    @Override
+    public void configure(final AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(authenticationProvider);
+    }
+    
+    @Bean
+    public DefaultSpringSecurityContextSource contextSource() {
+        return new DefaultSpringSecurityContextSource(
+                Arrays.asList("ldap://ldap.forumsys.com:389/"), "dc=example,dc=com"){{
+
+            setUserDn("cn=read-only-admin,dc=example,dc=com");
+            setPassword("password");
+        }};
+    }
+    
+    @Bean
+    public AuthenticationProvider authenticationProvider(){
+        ActiveDirectoryLdapAuthenticationProvider ap = new ActiveDirectoryLdapAuthenticationProvider(
+                                                                    "forumsys.com",
+                                                                       "ldap://ldap.forumsys.com:389/");
+        ap.setConvertSubErrorCodesToExceptions(true);
+        return ap;
+    }
    
+    @Bean
+    public BindAuthenticator bindAuthenticator(FilterBasedLdapUserSearch userSearch){
+        return new BindAuthenticator(contextSource()){{
+            setUserSearch(userSearch);
+
+        }};
+    }
+    
+    @Bean
+    public FilterBasedLdapUserSearch filterBasedLdapUserSearch(){
+        return new FilterBasedLdapUserSearch("cn=read-only-admin", //user-search-base
+                "(uid={0})", //user-search-filter
+                contextSource()); //ldapServer
+    }
+    
+    @Bean
+    public LdapAuthoritiesPopulator authoritiesPopulator(){
+        return new ActiveDirectoryLdapAuthoritiesPopulator();
+    }
+    @Bean
+    public UserDetailsContextMapper userDetailsContextMapper(){
+        return new InetOrgPersonContextMapper();
+    }
+
     
     
     @Override

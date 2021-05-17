@@ -59,9 +59,8 @@ public class ReservationForm extends FormLayout{
 	 public ReservationForm(List<Livre> list) {
 		 addClassName("contact-form");
          binder.bindInstanceFields(this);
-	     add(
+	     add(       
 	                adress,
-	                disponibilite,
 	                createButtonsLayout()
 	        );
 	    }

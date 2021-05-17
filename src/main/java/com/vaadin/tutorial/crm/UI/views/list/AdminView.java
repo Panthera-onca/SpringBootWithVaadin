@@ -1,8 +1,11 @@
 package com.vaadin.tutorial.crm.UI.views.list;
 
+import javax.persistence.Entity;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 
+import org.springframework.stereotype.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
@@ -17,6 +20,8 @@ import com.vaadin.tutorial.crm.backend.entity.Reservation;
 import com.vaadin.tutorial.crm.backend.service.LivreService;
 import com.vaadin.tutorial.crm.backend.service.ReservationService;
 
+
+@Component
 @Route(value ="admin", layout = MainLayout.class)
 @Secured("ROLE_Admin") // 
 public class AdminView extends VerticalLayout {
@@ -54,7 +59,7 @@ public class AdminView extends VerticalLayout {
     private void configureGrid() {
         grid.addClassName("livre-grid");
         grid.setSizeFull();
-        grid.setColumns("titreLivre", "description", "auteur", "refeni", "isbn", "categorie", "disponibilite", "campus"); 
+        grid.setColumns("titreLivre", "description", "auteur", "refeni", "isbn", "categorie",  "campus"); 
         grid.addColumn(livre -> { 
             Reservation reservation = livre.getReservation();
             return reservation == null ? "-" : reservation.getCreatedAt();

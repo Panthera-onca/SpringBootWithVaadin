@@ -56,7 +56,6 @@ public class LivreService {
             livre.setRefeni(newLivre.getRefeni());
             livre.setIsbn(newLivre.getIsbn());
             livre.setCampus(newLivre.getCampus());
-            livre.setDisponibilite(newLivre.isDisponibilite());
             livre.setReservation(newLivre.getReservation());
             livre.setStockCount(newLivre.getStockCount());
             livre.setCategorie(newLivre.getCategorie());

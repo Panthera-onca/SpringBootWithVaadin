@@ -93,7 +93,7 @@ public class ReservationView extends VerticalLayout{
     private void configureGrid() {
         grid.addClassName("reservation-grid");
         grid.setSizeFull();
-        grid.setColumns("createdAt", "adress", "disponibilite");
+        grid.setColumns("createdAt", "adress");
         grid.addColumn(reservation -> {
            Livre livre = reservation.getLivre();
            return livre == null ? "-" : livre.getTitreLivre();

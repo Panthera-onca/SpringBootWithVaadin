@@ -3,12 +3,13 @@ package com.vaadin.tutorial.crm.backend.entity;
 import java.util.Collection;
 
 import javax.naming.Name;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 
 import org.springframework.ldap.odm.annotations.Attribute;
 import org.springframework.ldap.odm.annotations.DnAttribute;
 import org.springframework.ldap.odm.annotations.Entry;
-import org.springframework.ldap.odm.annotations.Id;
+import javax.persistence.Id;
 import org.springframework.ldap.odm.annotations.Transient;
 import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,6 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Entity
 @Entry(
 	    objectClasses = {"inetOrgPerson", "organizationalPerson", "person", "top"}
 	)
@@ -25,13 +27,12 @@ import lombok.NoArgsConstructor;
 	@NoArgsConstructor
 	@AllArgsConstructor
 	public final class User implements UserDetails{
-	    private @GeneratedValue Long id;
 	    
 
 		@Id
 	    private Name dn;
 
-	    @DnAttribute(value = "uid", index = 1)
+	    @DnAttribute(value = "uid", index = 1) 
 	    private String uid;
 
 	    @DnAttribute(value = "ou", index = 0)
@@ -46,10 +47,6 @@ import lombok.NoArgsConstructor;
 
 	    @Attribute(name = "userPassword")
 	    private String password;
-	    
-	    public User() {
-
-	    }
 
 	    public User(String uid, String username, String fullName, String group, String password) {
 	        this.dn = LdapNameBuilder.newInstance("uid=" + uid + ",ou=" + group).build();
@@ -100,13 +97,6 @@ import lombok.NoArgsConstructor;
 			this.password = password;
 		}
 		
-		public Long getId() {
-			return id;
-		}
-
-		public void setId(Long id) {
-			this.id = id;
-		}
 
 		@Override
 		public Collection<? extends GrantedAuthority> getAuthorities() {

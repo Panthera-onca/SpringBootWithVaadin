@@ -55,8 +55,6 @@ public class Livre extends AbstractEntity implements Cloneable{
 	@Enumerated(EnumType.STRING)
 	@NotNull
 	private Categorie categorie;
-	@NotNull
-    private boolean disponibilite;
 	
 	@OneToOne(fetch = FetchType.LAZY, mappedBy = "livre")
 	private Reservation reservation;
@@ -82,7 +80,7 @@ public class Livre extends AbstractEntity implements Cloneable{
 
 	public Livre(Long id, @NotNull @NotEmpty String titreLivre, @NotNull @NotEmpty String description,
 			@NotNull @NotEmpty String auteur, @NotNull @NotEmpty String refeni, @NotNull @NotEmpty String isbn,
-			@NotNull Campus campus, @NotNull Categorie categorie, @NotNull boolean disponibilite,
+			@NotNull Campus campus, @NotNull Categorie categorie, 
 			Reservation reservation,
 			@Min(value = 0, message = "Le montant des livres ne peut pas etre negatif") int stockCount) {
 		this.id = id;
@@ -93,7 +91,6 @@ public class Livre extends AbstractEntity implements Cloneable{
 		this.isbn = isbn;
 		this.campus = campus;
 		this.categorie = categorie;
-		this.disponibilite = disponibilite;
 		this.reservation = reservation;
 		this.stockCount = stockCount;
 	}
@@ -298,29 +295,6 @@ public class Livre extends AbstractEntity implements Cloneable{
 
 
 
-	public boolean isDisponibilite() {
-		return disponibilite;
-	}
-
-
-
-
-
-
-
-
-
-	public void setDisponibilite(boolean disponibilite) {
-		this.disponibilite = disponibilite;
-	}
-
-
-
-
-
-
-
-
 
 	public Reservation getReservation() {
 		return reservation;
@@ -370,14 +344,7 @@ public class Livre extends AbstractEntity implements Cloneable{
 
 
 
-	@Override
-	public String toString() {
-		return "Livre [id=" + id + ", titreLivre=" + titreLivre + ", description=" + description + ", auteur=" + auteur
-				+ ", refeni=" + refeni + ", isbn=" + isbn + ", campus=" + campus + ", categorie=" + categorie
-				+ ", disponibilite=" + disponibilite + ", reservation=" + reservation + ", stockCount=" + stockCount
-				+ "]";
-	}
-
+	
 
 
 
@@ -390,8 +357,8 @@ public class Livre extends AbstractEntity implements Cloneable{
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(auteur, campus, categorie, description, disponibilite, id, isbn, refeni,
-				reservation, stockCount, titreLivre);
+		result = prime * result + Objects.hash(auteur, campus, categorie, description, id, isbn, refeni, reservation,
+				stockCount, titreLivre);
 		return result;
 	}
 
@@ -413,10 +380,25 @@ public class Livre extends AbstractEntity implements Cloneable{
 			return false;
 		Livre other = (Livre) obj;
 		return Objects.equals(auteur, other.auteur) && campus == other.campus && categorie == other.categorie
-				&& Objects.equals(description, other.description) && disponibilite == other.disponibilite
-				&& Objects.equals(id, other.id) && Objects.equals(isbn, other.isbn)
-				&& Objects.equals(refeni, other.refeni) && Objects.equals(reservation, other.reservation)
-				&& stockCount == other.stockCount && Objects.equals(titreLivre, other.titreLivre);
+				&& Objects.equals(description, other.description) && Objects.equals(id, other.id)
+				&& Objects.equals(isbn, other.isbn) && Objects.equals(refeni, other.refeni)
+				&& Objects.equals(reservation, other.reservation) && stockCount == other.stockCount
+				&& Objects.equals(titreLivre, other.titreLivre);
+	}
+
+
+
+
+
+
+
+
+
+	@Override
+	public String toString() {
+		return "Livre [id=" + id + ", titreLivre=" + titreLivre + ", description=" + description + ", auteur=" + auteur
+				+ ", refeni=" + refeni + ", isbn=" + isbn + ", campus=" + campus + ", categorie=" + categorie
+				+ ", reservation=" + reservation + ", stockCount=" + stockCount + "]";
 	}
 
 

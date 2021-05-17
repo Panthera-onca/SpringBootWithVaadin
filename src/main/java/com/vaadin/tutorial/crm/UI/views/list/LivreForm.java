@@ -77,7 +77,6 @@ public class LivreForm extends FormLayout{
 	    	auteur,
 	        refeni,
 	        isbn,
-	        disponibilite,
 	        categorie,
 	        campus,
 	        stockCount,

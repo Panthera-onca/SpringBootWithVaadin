@@ -13,7 +13,6 @@ import com.vaadin.flow.router.RouterLink;
 
 
 
-
 @Route("login")
 @PageTitle("Login | ENI Ecole Informatique")
 public class LoginView extends VerticalLayout implements BeforeEnterObserver {
